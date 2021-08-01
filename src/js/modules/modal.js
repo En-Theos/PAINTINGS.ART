@@ -21,7 +21,7 @@ export default function modal(selModal, selButton, destoy = false) {
         if (!display) {
             codeShow(".popup-consultation");
         }
-    }, 60000);
+    }, 60000000);
 
     const modalWindow = document.querySelector(selModal);
     modalWindow.addEventListener('click', (event) => {
@@ -30,7 +30,6 @@ export default function modal(selModal, selButton, destoy = false) {
         }
     });
 }
-
 
 function codeShow(selModal) {
     document.querySelector(selModal).style.display = "block";
@@ -42,12 +41,7 @@ function codeShow(selModal) {
 }
 
 function codeHide(selModal) {
-    document.querySelector(selModal).classList.add("animated", "fadeInUp");
-    document.querySelector(selModal).classList.remove("fadeInDown");
-    setTimeout(() => {
-        document.querySelector(selModal).style.display = "none";
-    }, 1000);
-
+    document.querySelector(selModal).style.display = "none";
     document.body.style.overflow = "";
     document.documentElement.style.marginRight = "";
 }

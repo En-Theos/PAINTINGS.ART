@@ -18,7 +18,7 @@
 .animated.bounceIn,
 .animated.bounceOut {
     animation-duration: .75s;
-    
+    overflow:unset
 }
 
 @keyframes bounce {
