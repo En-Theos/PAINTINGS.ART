@@ -4,5 +4,23 @@
   ],
   "consultationRequests": [
     
+  ],
+  "stylesBlock": [
+    {
+      "img": "assets/img/styles-5.jpg",
+      "name": "Пастелью"
+    },
+    {
+      "img": "assets/img/styles-6.jpg",
+      "name": "Поп-арт"
+    },
+    {
+      "img": "assets/img/styles-7.png",
+      "name": "Фотомозаика"
+    },
+    {
+      "img": "assets/img/styles-8.jpg",
+      "name": "Шарж"
+    }
   ]
 }

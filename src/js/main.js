@@ -3,6 +3,7 @@ import slider from "./modules/slider";
 import postForms from "./modules/forms";
 import mask from "./modules/mask";
 import checksText from "./modules/checksTextInput";
+import loadingCards from "./modules/loadingСards";
 
 window.addEventListener('DOMContentLoaded', () => {
     modal(".popup-design", ".button-design");
@@ -26,5 +27,5 @@ window.addEventListener('DOMContentLoaded', () => {
     mask("[name='phone']");
     checksText("[name='name']", "Руский");
     checksText("[name='message']", "Руский");
-
+    loadingCards("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
 });

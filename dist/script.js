@@ -2694,6 +2694,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_mask__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/mask */ "./src/js/modules/mask.js");
 /* harmony import */ var _modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/checksTextInput */ "./src/js/modules/checksTextInput.js");
+/* harmony import */ var _modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/loadingСards */ "./src/js/modules/loadingСards.js");
+
 
 
 
@@ -2721,6 +2723,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_mask__WEBPACK_IMPORTED_MODULE_3__["default"])("[name='phone']");
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='name']", "Руский");
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='message']", "Руский");
+  Object(_modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__["default"])("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
 });
 
 /***/ }),
@@ -2847,6 +2850,66 @@ function postForms(selForm, urlBaseDate, modal = ".popup-design") {
       statusModal.remove();
       Object(_services_services__WEBPACK_IMPORTED_MODULE_3__["codeHide"])(modal);
     }, 3000);
+  }
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/loadingСards.js":
+/*!****************************************!*\
+  !*** ./src/js/modules/loadingСards.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return loadingCards; });
+/* harmony import */ var core_js_modules_es_promise_finally__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.promise.finally */ "./node_modules/core-js/modules/es.promise.finally.js");
+/* harmony import */ var core_js_modules_es_promise_finally__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_finally__WEBPACK_IMPORTED_MODULE_0__);
+
+function loadingCards(source, recipient, selGetButton) {
+  const getButton = document.querySelector(selGetButton);
+  getButton.addEventListener('click', () => {
+    getButton.querySelector("img").classList.add("animated", "infinite", "rotateIn");
+    fetch(source).then(responce => {
+      if (responce.ok && responce.status == 200) {
+        return responce.json();
+      } else {
+        statusText();
+      }
+    }).then(data => {
+      data.forEach(objCard => {
+        const div = document.createElement("div");
+        div.classList.add("col-sm-3", "col-sm-offset-0", "col-xs-10", "col-xs-offset-1", "animated", "flipInY");
+        div.innerHTML = `
+                <div class=styles-block>
+                    <img src="${objCard.img}" alt>
+                    <h4>${objCard.name}</h4>
+                    <a href="#">Подробнее</a>
+                </div>
+                `;
+        document.querySelector(recipient).append(div);
+      });
+      getButton.remove();
+    }).catch(() => {
+      statusText();
+    }).finally(() => {
+      getButton.querySelector("img").classList.remove("animated", "infinite", "rotateIn");
+    });
+  });
+
+  function statusText() {
+    getButton.innerHTML = `
+            <img src="./assets/img/catch.png" alt="">
+            Что-то пошло не так
+        `;
+    setTimeout(() => {
+      getButton.innerHTML = `
+                <img src="./assets/img/reload.svg" alt="">
+                Посмотреть больше стилей
+            `;
+    }, 2000);
   }
 }
 
