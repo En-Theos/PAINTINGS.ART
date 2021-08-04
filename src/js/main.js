@@ -1,5 +1,8 @@
 import modal from "./modules/modal";
 import slider from "./modules/slider";
+import postForms from "./modules/forms";
+import mask from "./modules/mask";
+import checksText from "./modules/checksTextInput";
 
 window.addEventListener('DOMContentLoaded', () => {
     modal(".popup-design", ".button-design");
@@ -16,4 +19,12 @@ window.addEventListener('DOMContentLoaded', () => {
         selSlides: ".main-slider-item", 
         direction: "vertical"
     });
+    postForms(".popup-design form", "http://localhost:3000/designOrders", ".popup-design");
+    postForms(".popup-consultation form", "http://localhost:3000/consultationRequests", ".popup-consultation");
+    postForms(".calc form", "http://localhost:3000/designOrders");
+    postForms(".consultation form", "http://localhost:3000/consultationRequests");
+    mask("[name='phone']");
+    checksText("[name='name']", "Руский");
+    checksText("[name='message']", "Руский");
+
 });

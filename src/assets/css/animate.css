@@ -10,7 +10,7 @@
 }
 
 .animated.hinge {
-    animation-duration: 2s
+    animation-duration: 2s;
 }
 
 .animated.flipOutX,
@@ -18,7 +18,6 @@
 .animated.bounceIn,
 .animated.bounceOut {
     animation-duration: .75s;
-    overflow:unset
 }
 
 @keyframes bounce {
@@ -720,7 +719,7 @@
 
     to {
         opacity: 0;
-        transform: translate3d(0, 100%, 0)
+        transform: translate3d(0, -100%, 0)
     }
 }
 
