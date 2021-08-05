@@ -1,6 +1,6 @@
 import {codeHide} from "../services/services";
 
-export default function postForms(selForm, urlBaseDate, modal = ".popup-design") {
+export default function postForms({selForm, urlBaseDate, additionalData, modal = ".popup-design"}) {
     const form = document.querySelector(selForm);
     const upload = document.querySelectorAll('[name="upload"]');
 
@@ -30,14 +30,18 @@ export default function postForms(selForm, urlBaseDate, modal = ".popup-design")
         load.style.width = "30px";
         form.append(load);
 
-        const formData = JSON.stringify(Object.fromEntries(new FormData(form).entries()));
+        let objData = Object.fromEntries(new FormData(form).entries())
+        if (additionalData) {
+            objData = Object.assign(objData, additionalData);
+        }
+        const JSONData = JSON.stringify(objData);
 
         fetch(urlBaseDate, {
             method: "POST",
             headers:  {
                 "Content-type": "application/json"
             },
-            body: formData
+            body: JSONData
         }).then((data) => {
             if (data.ok && data.status != 404) {
                 createMessage(message.success, message.successImg);

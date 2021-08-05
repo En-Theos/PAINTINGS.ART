@@ -1,10 +1,28 @@
 {
   "designOrders": [
-   
+    {
+      "upload": {},
+      "size": "50x70",
+      "material": "Холст из натурального хлопка",
+      "discount": 0.7,
+      "id": 1
+    },
+    {
+      "upload": {},
+      "size": "40x50",
+      "material": "Холст из волокна",
+      "options": "Доставка готовых работ",
+      "id": 2
+    },
+    {
+      "upload": {},
+      "size": "40x50",
+      "material": "Холст из волокна",
+      "options": "Покрытие арт-гелем",
+      "id": 3
+    }
   ],
-  "consultationRequests": [
-    
-  ],
+  "consultationRequests": [],
   "stylesBlock": [
     {
       "img": "assets/img/styles-5.jpg",
@@ -22,5 +40,23 @@
       "img": "assets/img/styles-8.jpg",
       "name": "Шарж"
     }
-  ]
+  ],
+  "price": {
+    "priceSize": {
+      "40x50": 100,
+      "50x70": 200,
+      "70x70": 300,
+      "70x100": 400
+    },
+    "priceMaterial": {
+      "Холст из волокна": 1,
+      "Льняной холст": 1.2,
+      "Холст из натурального хлопка": 1.5
+    },
+    "priceOptions": {
+      "Покрытие арт-гелем": 300,
+      "Экспресс-изготовление": 400,
+      "Доставка готовых работ": 500
+    }
+  }
 }

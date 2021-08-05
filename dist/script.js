@@ -2695,6 +2695,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_mask__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/mask */ "./src/js/modules/mask.js");
 /* harmony import */ var _modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/checksTextInput */ "./src/js/modules/checksTextInput.js");
 /* harmony import */ var _modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/loadingСards */ "./src/js/modules/loadingСards.js");
+/* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js");
+
 
 
 
@@ -2702,6 +2704,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 window.addEventListener('DOMContentLoaded', () => {
+  const postData = {};
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-design", ".button-design");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-consultation", ".button-consultation");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-gift", ".fixed-gift", true);
@@ -2716,15 +2719,148 @@ window.addEventListener('DOMContentLoaded', () => {
     selSlides: ".main-slider-item",
     direction: "vertical"
   });
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])(".popup-design form", "http://localhost:3000/designOrders", ".popup-design");
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])(".popup-consultation form", "http://localhost:3000/consultationRequests", ".popup-consultation");
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])(".calc form", "http://localhost:3000/designOrders");
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])(".consultation form", "http://localhost:3000/consultationRequests");
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    selForm: ".popup-design form",
+    urlBaseDate: "http://localhost:3000/designOrders"
+  });
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    selForm: ".popup-consultation form",
+    urlBaseDate: "http://localhost:3000/consultationRequests",
+    modal: ".popup-consultation"
+  });
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    selForm: ".consultation form",
+    urlBaseDate: "http://localhost:3000/consultationRequests"
+  });
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    selForm: ".calc form",
+    urlBaseDate: "http://localhost:3000/designOrders",
+    additionalData: postData
+  });
   Object(_modules_mask__WEBPACK_IMPORTED_MODULE_3__["default"])("[name='phone']");
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='name']", "Руский");
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='message']", "Руский");
   Object(_modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__["default"])("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
+  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(".calc form", postData);
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/calc.js":
+/*!********************************!*\
+  !*** ./src/js/modules/calc.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return calc; });
+function calc(selCalc, postData) {
+  let fileUpload = false;
+  let calcData = {
+    optionsPrice: 0,
+    discount: 0
+  };
+  let priceData;
+  fetch("http://localhost:3000/price").then(responce => {
+    if (responce.ok && responce.status == 200) {
+      return responce.json();
+    }
+  }).then(data => {
+    priceData = data;
+  });
+  document.querySelector(selCalc).addEventListener('input', event => {
+    if (priceData) {
+      if (event.target.getAttribute('type') == "file") {
+        fileUpload = true;
+      }
+
+      switch (event.target.id) {
+        case "size":
+          if (event.target.value == "Выберите размер картины") {
+            postData.size = 0;
+            calcData.sizePrice = 0;
+          } else {
+            postData.size = event.target.value;
+            calcData.sizePrice = priceData.priceSize[event.target.value];
+          }
+
+          break;
+
+        case "material":
+          if (event.target.value == "Выберите материал картины") {
+            postData.material = 0;
+            calcData.materialPrice = 0;
+          } else {
+            postData.material = event.target.value;
+            calcData.materialPrice = priceData.priceMaterial[event.target.value];
+          }
+
+          break;
+
+        case "options":
+          if (event.target.value == "Дополнительные услуги") {
+            postData.options = "Не выбрал";
+            calcData.optionsPrice = 0;
+          } else {
+            postData.options = event.target.value;
+            calcData.optionsPrice = priceData.priceOptions[event.target.value];
+          }
+
+          break;
+      }
+
+      if (event.target.classList.contains("promocode")) {
+        switch (event.target.value) {
+          case "IWANTPOPART":
+            calcData.discount = 0.7;
+            postData.discount = 0.7;
+            break;
+
+          default:
+            calcData.discount = 0;
+            postData.discount = "Не ввел";
+            break;
+        }
+      }
+
+      postToForms(calcData);
+    } else {
+      document.querySelector(".calc-price").textContent = "Что-то пошло не так";
+    }
+  });
+
+  function postToForms({
+    sizePrice,
+    materialPrice,
+    optionsPrice,
+    discount
+  }) {
+    if (sizePrice && materialPrice) {
+      document.querySelector(".calc-price").textContent = `
+                Сумма заказа ${Math.round(discount ? (sizePrice * materialPrice + optionsPrice) * discount : sizePrice * materialPrice + optionsPrice)}
+            `;
+
+      if (fileUpload) {
+        document.querySelector(".calc .button-order").disabled = false;
+        document.querySelector(".calc form").addEventListener('submit', () => {
+          calcData = {
+            sizePrice: 0,
+            materialPrice: 0,
+            optionsPrice: 0,
+            discount: 0
+          };
+          document.querySelector(".calc .button-order").disabled = true;
+          document.querySelector(".calc-price").textContent = "Для расчета нужно выбрать размер картины и материал картины";
+        });
+      }
+    } else {
+      document.querySelector(".calc .button-order").disabled = true;
+      document.querySelector(".calc-price").textContent = "Для расчета нужно выбрать размер картины и материал картины";
+    }
+  }
+}
 
 /***/ }),
 
@@ -2779,7 +2915,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function postForms(selForm, urlBaseDate, modal = ".popup-design") {
+function postForms({
+  selForm,
+  urlBaseDate,
+  additionalData,
+  modal = ".popup-design"
+}) {
   const form = document.querySelector(selForm);
   const upload = document.querySelectorAll('[name="upload"]');
   const message = {
@@ -2804,13 +2945,19 @@ function postForms(selForm, urlBaseDate, modal = ".popup-design") {
     load.src = message.loading;
     load.style.width = "30px";
     form.append(load);
-    const formData = JSON.stringify(Object.fromEntries(new FormData(form).entries()));
+    let objData = Object.fromEntries(new FormData(form).entries());
+
+    if (additionalData) {
+      objData = Object.assign(objData, additionalData);
+    }
+
+    const JSONData = JSON.stringify(objData);
     fetch(urlBaseDate, {
       method: "POST",
       headers: {
         "Content-type": "application/json"
       },
-      body: formData
+      body: JSONData
     }).then(data => {
       if (data.ok && data.status != 404) {
         createMessage(message.success, message.successImg);
