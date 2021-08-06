@@ -5,6 +5,8 @@ import mask from "./modules/mask";
 import checksText from "./modules/checksTextInput";
 import loadingCards from "./modules/loadingСards";
 import calc from "./modules/calc";
+import filter from "./modules/filter";
+import replacementImg from "./modules/replacementImg";
 
 window.addEventListener('DOMContentLoaded', () => {
     const postData = {};
@@ -46,4 +48,6 @@ window.addEventListener('DOMContentLoaded', () => {
     checksText("[name='message']", "Руский");
     loadingCards("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
     calc(".calc form", postData);
+    filter("#portfolio .portfolio-block", "#portfolio .portfolio-menu li");
+    replacementImg(".sizes .sizes-block", ".sizes .sizes-block img");
 });

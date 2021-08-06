@@ -2696,6 +2696,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/checksTextInput */ "./src/js/modules/checksTextInput.js");
 /* harmony import */ var _modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/loadingСards */ "./src/js/modules/loadingСards.js");
 /* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js");
+/* harmony import */ var _modules_filter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/filter */ "./src/js/modules/filter.js");
+/* harmony import */ var _modules_replacementImg__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/replacementImg */ "./src/js/modules/replacementImg.js");
+
+
 
 
 
@@ -2742,6 +2746,8 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='message']", "Руский");
   Object(_modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__["default"])("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
   Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(".calc form", postData);
+  Object(_modules_filter__WEBPACK_IMPORTED_MODULE_7__["default"])("#portfolio .portfolio-block", "#portfolio .portfolio-menu li");
+  Object(_modules_replacementImg__WEBPACK_IMPORTED_MODULE_8__["default"])(".sizes .sizes-block", ".sizes .sizes-block img");
 });
 
 /***/ }),
@@ -2888,6 +2894,46 @@ function checksText(selInputs, ifChecks) {
           return '';
         }
       });
+    });
+  });
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/filter.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/filter.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return filter; });
+function filter(selElementFiltration, selButtonFiltration) {
+  const elementFiltration = document.querySelectorAll(selElementFiltration);
+  const buttonFiltration = document.querySelectorAll(selButtonFiltration);
+  buttonFiltration.forEach(button => {
+    button.addEventListener('click', () => {
+      let counter = 0;
+      buttonFiltration.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+      elementFiltration.forEach(elem => {
+        if (elem.classList.contains(button.classList.item(0))) {
+          elem.style.display = 'block';
+          elem.classList.add("animated", "flipInY");
+          counter++;
+        } else {
+          elem.style.display = 'none';
+          elem.classList.remove("animated", "flipInY");
+        }
+      });
+
+      if (counter == 0) {
+        document.querySelector(".portfolio-no").style.display = 'block';
+      } else {
+        document.querySelector(".portfolio-no").style.display = 'none';
+      }
     });
   });
 }
@@ -3170,6 +3216,37 @@ function showModalByScroll() {
     document.querySelector(".fixed-gift").click();
     window.removeEventListener('scroll', showModalByScroll);
   }
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/replacementImg.js":
+/*!******************************************!*\
+  !*** ./src/js/modules/replacementImg.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return replacementImg; });
+function replacementImg(selBoxReplaceContent, selReplaceContent) {
+  const boxReplaceContent = document.querySelectorAll(selBoxReplaceContent);
+  const replaceContent = document.querySelectorAll(selReplaceContent);
+  boxReplaceContent.forEach((box, i) => {
+    const arrSrc = replaceContent[i].src.split('.');
+    box.addEventListener('mouseover', () => {
+      replaceContent[i].style.cssText = `
+                position: relative;
+                z-index: 1;
+            `;
+      replaceContent[i].src = arrSrc[0] + "-1." + arrSrc[1];
+    });
+    box.addEventListener('mouseout', () => {
+      replaceContent[i].style.cssText = ``;
+      replaceContent[i].src = arrSrc[0] + "." + arrSrc[1];
+    });
+  });
 }
 
 /***/ }),

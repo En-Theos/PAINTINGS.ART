@@ -1,28 +1,10 @@
 {
   "designOrders": [
-    {
-      "upload": {},
-      "size": "50x70",
-      "material": "Холст из натурального хлопка",
-      "discount": 0.7,
-      "id": 1
-    },
-    {
-      "upload": {},
-      "size": "40x50",
-      "material": "Холст из волокна",
-      "options": "Доставка готовых работ",
-      "id": 2
-    },
-    {
-      "upload": {},
-      "size": "40x50",
-      "material": "Холст из волокна",
-      "options": "Покрытие арт-гелем",
-      "id": 3
-    }
+   
   ],
-  "consultationRequests": [],
+  "consultationRequests": [
+    
+  ],
   "stylesBlock": [
     {
       "img": "assets/img/styles-5.jpg",
