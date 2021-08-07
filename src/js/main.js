@@ -7,6 +7,8 @@ import loadingCards from "./modules/loadingСards";
 import calc from "./modules/calc";
 import filter from "./modules/filter";
 import replacementImg from "./modules/replacementImg";
+import accordion from "./modules/accordion";
+import burger from "./modules/burger";
 
 window.addEventListener('DOMContentLoaded', () => {
     const postData = {};
@@ -50,4 +52,6 @@ window.addEventListener('DOMContentLoaded', () => {
     calc(".calc form", postData);
     filter("#portfolio .portfolio-block", "#portfolio .portfolio-menu li");
     replacementImg(".sizes .sizes-block", ".sizes .sizes-block img");
+    accordion(".accordion-heading", ".accordion-block");
+    burger(".burger", ".burger-menu");
 });
