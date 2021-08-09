@@ -9,9 +9,16 @@ import filter from "./modules/filter";
 import replacementImg from "./modules/replacementImg";
 import accordion from "./modules/accordion";
 import burger from "./modules/burger";
+import scroll from "./modules/scroll";
+import drop from "./modules/drop";
 
 window.addEventListener('DOMContentLoaded', () => {
     const postData = {};
+
+    const fileUpload = {
+        iff: false
+    };
+
 
     modal(".popup-design", ".button-design");
     modal(".popup-consultation", ".button-consultation");
@@ -49,9 +56,11 @@ window.addEventListener('DOMContentLoaded', () => {
     checksText("[name='name']", "Руский");
     checksText("[name='message']", "Руский");
     loadingCards("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
-    calc(".calc form", postData);
+    calc(".calc form", postData, fileUpload);
     filter("#portfolio .portfolio-block", "#portfolio .portfolio-menu li");
     replacementImg(".sizes .sizes-block", ".sizes .sizes-block img");
     accordion(".accordion-heading", ".accordion-block");
     burger(".burger", ".burger-menu");
+    scroll(".pageup");
+    drop(fileUpload);
 });

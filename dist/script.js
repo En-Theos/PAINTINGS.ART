@@ -2700,6 +2700,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_replacementImg__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/replacementImg */ "./src/js/modules/replacementImg.js");
 /* harmony import */ var _modules_accordion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/accordion */ "./src/js/modules/accordion.js");
 /* harmony import */ var _modules_burger__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/burger */ "./src/js/modules/burger.js");
+/* harmony import */ var _modules_scroll__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/scroll */ "./src/js/modules/scroll.js");
+/* harmony import */ var _modules_drop__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/drop */ "./src/js/modules/drop.js");
+
+
 
 
 
@@ -2713,6 +2717,9 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('DOMContentLoaded', () => {
   const postData = {};
+  const fileUpload = {
+    iff: false
+  };
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-design", ".button-design");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-consultation", ".button-consultation");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-gift", ".fixed-gift", true);
@@ -2749,11 +2756,13 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='name']", "Руский");
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='message']", "Руский");
   Object(_modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__["default"])("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
-  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(".calc form", postData);
+  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(".calc form", postData, fileUpload);
   Object(_modules_filter__WEBPACK_IMPORTED_MODULE_7__["default"])("#portfolio .portfolio-block", "#portfolio .portfolio-menu li");
   Object(_modules_replacementImg__WEBPACK_IMPORTED_MODULE_8__["default"])(".sizes .sizes-block", ".sizes .sizes-block img");
   Object(_modules_accordion__WEBPACK_IMPORTED_MODULE_9__["default"])(".accordion-heading", ".accordion-block");
   Object(_modules_burger__WEBPACK_IMPORTED_MODULE_10__["default"])(".burger", ".burger-menu");
+  Object(_modules_scroll__WEBPACK_IMPORTED_MODULE_11__["default"])(".pageup");
+  Object(_modules_drop__WEBPACK_IMPORTED_MODULE_12__["default"])(fileUpload);
 });
 
 /***/ }),
@@ -2829,8 +2838,7 @@ function burger(selButton, selMenu) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return calc; });
-function calc(selCalc, postData) {
-  let fileUpload = false;
+function calc(selCalc, postData, fileUpload) {
   let calcData = {
     optionsPrice: 0,
     discount: 0
@@ -2843,11 +2851,10 @@ function calc(selCalc, postData) {
   }).then(data => {
     priceData = data;
   });
-  document.querySelector(selCalc).addEventListener('input', event => {
+  const boxCalc = document.querySelector(selCalc);
+  boxCalc.addEventListener('input', event => {
     if (priceData) {
-      if (event.target.getAttribute('type') == "file") {
-        fileUpload = true;
-      }
+      console.log(fileUpload);
 
       switch (event.target.id) {
         case "size":
@@ -2915,7 +2922,7 @@ function calc(selCalc, postData) {
                 Сумма заказа ${Math.round(discount ? (sizePrice * materialPrice + optionsPrice) * discount : sizePrice * materialPrice + optionsPrice)}
             `;
 
-      if (fileUpload) {
+      if (fileUpload.iff) {
         document.querySelector(".calc .button-order").disabled = false;
         document.querySelector(".calc form").addEventListener('submit', () => {
           calcData = {
@@ -2961,6 +2968,79 @@ function checksText(selInputs, ifChecks) {
           return '';
         }
       });
+    });
+  });
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/drop.js":
+/*!********************************!*\
+  !*** ./src/js/modules/drop.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return drop; });
+function drop(fileUpload) {
+  document.querySelectorAll("[name='upload']").forEach(input => {
+    ['drop', 'input'].forEach(eventName => {
+      input.addEventListener(eventName, event => {
+        event.preventDefault();
+
+        try {
+          event.target.files = event.dataTransfer.files;
+        } catch (error) {}
+
+        if (input.files[0].name != '') {
+          input.previousElementSibling.previousElementSibling.style.border = "4px dashed #6feb11";
+        }
+
+        if (input.closest(".calc")) {
+          fileUpload.iff = true;
+          document.querySelector(".calc .button-order").disabled = false;
+        }
+
+        if (input.parentElement.getAttribute("data-upload") == "") {
+          let data = {
+            upload: input.files[0].name
+          };
+          data = JSON.stringify(data);
+          fetch("http://localhost:3000/designOrders", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json"
+            },
+            body: data
+          }).then(response => {
+            if (response.ok) {
+              input.previousElementSibling.textContent = "Отправлено";
+            } else {
+              input.previousElementSibling.textContent = "Ошибка";
+            }
+          }).catch(() => {
+            input.previousElementSibling.textContent = "Ошибка";
+          });
+        } else {
+          let dots;
+          const arr = input.files[0].name.split('.');
+          arr[0].length > 6 ? dots = "..." : dots = '.';
+          const name = arr[0].substring(0, 6) + dots + arr[1];
+          input.previousElementSibling.textContent = name;
+        }
+      });
+    });
+    input.addEventListener('dragenter', () => {
+      input.previousElementSibling.previousElementSibling.style.border = "4px dashed #e74005";
+    });
+    input.addEventListener('dragleave', () => {
+      input.previousElementSibling.previousElementSibling.style.border = "2px dashed #c51abb";
+
+      if (input.files.length != 0) {
+        input.previousElementSibling.previousElementSibling.style.border = "4px dashed #6feb11";
+      }
     });
   });
 }
@@ -3043,15 +3123,6 @@ function postForms({
     failure: "Ошибка",
     failureImg: "assets/img/fail.png"
   };
-  upload.forEach(item => {
-    item.addEventListener('input', () => {
-      let dots;
-      const arr = item.files[0].name.split('.');
-      arr[0].length > 6 ? dots = "..." : dots = '.';
-      const name = arr[0].substring(0, 6) + dots + arr[1];
-      item.previousElementSibling.textContent = name;
-    });
-  });
   form.addEventListener('submit', event => {
     event.preventDefault();
     const load = document.createElement("img");
@@ -3059,6 +3130,14 @@ function postForms({
     load.style.width = "30px";
     form.append(load);
     let objData = Object.fromEntries(new FormData(form).entries());
+    objData.upload = {
+      lastModified: objData.upload.lastModified,
+      lastModifiedDate: objData.upload.lastModifiedDate,
+      name: objData.upload.name,
+      size: objData.upload.size,
+      type: objData.upload.type,
+      webkitRelativePath: objData.upload.webkitRelativePath
+    };
 
     if (additionalData) {
       objData = Object.assign(objData, additionalData);
@@ -3083,6 +3162,7 @@ function postForms({
       load.remove();
       form.reset();
       upload.forEach(item => item.previousElementSibling.textContent = "Файл не выбран");
+      upload.previousElementSibling.previousElementSibling.style.border = "2px dashed #c51abb";
     });
   });
 
@@ -3318,6 +3398,58 @@ function replacementImg(selBoxReplaceContent, selReplaceContent) {
 
 /***/ }),
 
+/***/ "./src/js/modules/scroll.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/scroll.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return scroll; });
+function scroll(upSelector) {
+  const upElem = document.querySelector(upSelector);
+  window.addEventListener('scroll', () => {
+    if (document.documentElement.scrollTop > 1650) {
+      upElem.classList.add('animated', 'fadeIn');
+      upElem.classList.remove('fadeOut');
+    } else {
+      upElem.classList.add('fadeOut');
+      upElem.classList.remove('fadeIn');
+    }
+  }); // Scrolling with raf
+
+  let links = document.querySelectorAll('[href^="#"]');
+  links.forEach(link => {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      let heightTop = document.documentElement.scrollTop,
+          // получаем значение сколько в пикселях пролистал пользиватель
+      hash = this.hash,
+          // получаем строку с сылкой
+      toBlock = document.querySelector(hash).getBoundingClientRect().top; // получаем блок до которого мы должи пролистать
+
+      requestAnimationFrame(step);
+      let px = 0;
+
+      function step() {
+        px += 60;
+        let r = toBlock < 0 ? Math.max(px, toBlock) : Math.min(px, toBlock);
+        document.documentElement.scrollTo(0, r);
+
+        if (r != heightTop + toBlock) {
+          requestAnimationFrame(step);
+        } else {
+          location.hash = hash;
+        }
+      }
+    });
+  });
+}
+
+/***/ }),
+
 /***/ "./src/js/modules/slider.js":
 /*!**********************************!*\
   !*** ./src/js/modules/slider.js ***!
@@ -3369,8 +3501,10 @@ function slider({
   switchingSlide();
 
   try {
-    document.querySelector(selPrev).addEventListener('click', () => {
-      broadcastData(-1, "slideInLeft", "slideInRight");
+    document.querySelector(selPrev).addEventListener('click', function (event) {
+      if (this.classList.contains("main-prev-btn")) {
+        broadcastData(-1, "slideInLeft", "slideInRight");
+      }
     });
     document.querySelector(selNext).addEventListener('click', () => {
       broadcastData(1, "slideInRight", "slideInLeft");

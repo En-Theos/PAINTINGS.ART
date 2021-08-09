@@ -31,8 +31,10 @@ export default function slider({selWindow, selSlides, selPrev, selNext, directio
     switchingSlide();
 
     try {
-        document.querySelector(selPrev).addEventListener('click', () => {
-            broadcastData(-1, "slideInLeft", "slideInRight");
+        document.querySelector(selPrev).addEventListener('click', function (event) {
+            if (this.classList.contains("main-prev-btn")) {
+                broadcastData(-1, "slideInLeft", "slideInRight");
+            }
         });
         document.querySelector(selNext).addEventListener('click', () => {
             broadcastData(1, "slideInRight", "slideInLeft");

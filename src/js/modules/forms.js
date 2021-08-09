@@ -12,15 +12,7 @@ export default function postForms({selForm, urlBaseDate, additionalData, modal =
         failureImg: "assets/img/fail.png"
     };
 
-    upload.forEach(item => {
-        item.addEventListener('input', () => {
-            let dots;
-            const arr = item.files[0].name.split('.');
-            arr[0].length > 6 ? dots = "..." : dots = '.';
-            const name = arr[0].substring(0, 6) + dots + arr[1];
-            item.previousElementSibling.textContent = name;
-        });
-    });
+   
 
     form.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -30,7 +22,16 @@ export default function postForms({selForm, urlBaseDate, additionalData, modal =
         load.style.width = "30px";
         form.append(load);
 
-        let objData = Object.fromEntries(new FormData(form).entries())
+        let objData = Object.fromEntries(new FormData(form).entries());
+        objData.upload = {
+            lastModified: objData.upload.lastModified,
+            lastModifiedDate: objData.upload.lastModifiedDate,
+            name: objData.upload.name,
+            size: objData.upload.size,
+            type: objData.upload.type,
+            webkitRelativePath: objData.upload.webkitRelativePath
+        };
+      
         if (additionalData) {
             objData = Object.assign(objData, additionalData);
         }
@@ -54,6 +55,7 @@ export default function postForms({selForm, urlBaseDate, additionalData, modal =
             load.remove();
             form.reset();
             upload.forEach(item => item.previousElementSibling.textContent = "Файл не выбран");
+            upload.previousElementSibling.previousElementSibling.style.border = "2px dashed #c51abb";
         });
     });
 
