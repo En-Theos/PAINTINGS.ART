@@ -1,4 +1,4 @@
-export default function drop(fileUpload) {
+export default function drop() {
     document.querySelectorAll("[name='upload']").forEach(input => {
         ['drop', 'input'].forEach(eventName => {
             input.addEventListener(eventName, (event) => {
@@ -8,17 +8,10 @@ export default function drop(fileUpload) {
                     event.target.files = event.dataTransfer.files;
                 } catch (error) {}
     
-               
-                
                 if (input.files[0].name != '') {
                     input.previousElementSibling.previousElementSibling.style.border = "4px dashed #6feb11";
                 }
     
-                if (input.closest(".calc")) {
-                    fileUpload.iff = true;
-                    document.querySelector(".calc .button-order").disabled = false;
-                }
-
                 if (input.parentElement.getAttribute("data-upload") == "") {
                     let data = {
                         upload: input.files[0].name

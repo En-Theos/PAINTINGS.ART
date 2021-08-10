@@ -2717,9 +2717,6 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('DOMContentLoaded', () => {
   const postData = {};
-  const fileUpload = {
-    iff: false
-  };
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-design", ".button-design");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-consultation", ".button-consultation");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])(".popup-gift", ".fixed-gift", true);
@@ -2756,13 +2753,13 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='name']", "Руский");
   Object(_modules_checksTextInput__WEBPACK_IMPORTED_MODULE_4__["default"])("[name='message']", "Руский");
   Object(_modules_loading_ards__WEBPACK_IMPORTED_MODULE_5__["default"])("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
-  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(".calc form", postData, fileUpload);
+  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(".calc form", postData);
   Object(_modules_filter__WEBPACK_IMPORTED_MODULE_7__["default"])("#portfolio .portfolio-block", "#portfolio .portfolio-menu li");
   Object(_modules_replacementImg__WEBPACK_IMPORTED_MODULE_8__["default"])(".sizes .sizes-block", ".sizes .sizes-block img");
   Object(_modules_accordion__WEBPACK_IMPORTED_MODULE_9__["default"])(".accordion-heading", ".accordion-block");
   Object(_modules_burger__WEBPACK_IMPORTED_MODULE_10__["default"])(".burger", ".burger-menu");
   Object(_modules_scroll__WEBPACK_IMPORTED_MODULE_11__["default"])(".pageup");
-  Object(_modules_drop__WEBPACK_IMPORTED_MODULE_12__["default"])(fileUpload);
+  Object(_modules_drop__WEBPACK_IMPORTED_MODULE_12__["default"])();
 });
 
 /***/ }),
@@ -2838,12 +2835,13 @@ function burger(selButton, selMenu) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return calc; });
-function calc(selCalc, postData, fileUpload) {
+function calc(selCalc, postData) {
   let calcData = {
     optionsPrice: 0,
     discount: 0
   };
   let priceData;
+  let fileUpload = false;
   fetch("http://localhost:3000/price").then(responce => {
     if (responce.ok && responce.status == 200) {
       return responce.json();
@@ -2852,9 +2850,16 @@ function calc(selCalc, postData, fileUpload) {
     priceData = data;
   });
   const boxCalc = document.querySelector(selCalc);
+  boxCalc.querySelector("[type='file']").addEventListener('drop', () => {
+    fileUpload = true;
+  });
   boxCalc.addEventListener('input', event => {
     if (priceData) {
       console.log(fileUpload);
+
+      if (event.target.getAttribute("type") == 'file') {
+        fileUpload = true;
+      }
 
       switch (event.target.id) {
         case "size":
@@ -2922,7 +2927,7 @@ function calc(selCalc, postData, fileUpload) {
                 Сумма заказа ${Math.round(discount ? (sizePrice * materialPrice + optionsPrice) * discount : sizePrice * materialPrice + optionsPrice)}
             `;
 
-      if (fileUpload.iff) {
+      if (fileUpload) {
         document.querySelector(".calc .button-order").disabled = false;
         document.querySelector(".calc form").addEventListener('submit', () => {
           calcData = {
@@ -2984,7 +2989,7 @@ function checksText(selInputs, ifChecks) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return drop; });
-function drop(fileUpload) {
+function drop() {
   document.querySelectorAll("[name='upload']").forEach(input => {
     ['drop', 'input'].forEach(eventName => {
       input.addEventListener(eventName, event => {
@@ -2996,11 +3001,6 @@ function drop(fileUpload) {
 
         if (input.files[0].name != '') {
           input.previousElementSibling.previousElementSibling.style.border = "4px dashed #6feb11";
-        }
-
-        if (input.closest(".calc")) {
-          fileUpload.iff = true;
-          document.querySelector(".calc .button-order").disabled = false;
         }
 
         if (input.parentElement.getAttribute("data-upload") == "") {
@@ -3418,8 +3418,7 @@ function scroll(upSelector) {
       upElem.classList.add('fadeOut');
       upElem.classList.remove('fadeIn');
     }
-  }); // Scrolling with raf
-
+  });
   let links = document.querySelectorAll('[href^="#"]');
   links.forEach(link => {
     link.addEventListener('click', function (event) {
@@ -3435,8 +3434,16 @@ function scroll(upSelector) {
 
       function step() {
         px += 60;
-        let r = toBlock < 0 ? Math.max(px, toBlock) : Math.min(px, toBlock);
-        document.documentElement.scrollTo(0, r);
+        let r;
+
+        if (toBlock < 0) {
+          // если блок находится выше чем видимый контент, то в toBlock будет минусовое значение если ниже то плюсовое
+          r = heightTop - Math.min(px, heightTop);
+          document.documentElement.scrollTo(0, r);
+        } else {
+          r = Math.min(px, toBlock);
+          document.documentElement.scrollTo(0, r);
+        }
 
         if (r != heightTop + toBlock) {
           requestAnimationFrame(step);

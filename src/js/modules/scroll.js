@@ -11,8 +11,6 @@ export default function scroll(upSelector) {
         }
     });
 
-    // Scrolling with raf
-
     let links = document.querySelectorAll('[href^="#"]');
     
     links.forEach(link => {
@@ -27,9 +25,15 @@ export default function scroll(upSelector) {
             let px = 0;
             function step() {
                 px += 60;
-                let r = toBlock < 0 ? Math.max(px, toBlock) : Math.min(px, toBlock);
-                
-                document.documentElement.scrollTo(0, r);
+                let r;
+                if (toBlock < 0) { // если блок находится выше чем видимый контент, то в toBlock будет минусовое значение если ниже то плюсовое
+                    r = (heightTop - Math.min(px, heightTop));
+                    document.documentElement.scrollTo(0, r);
+                } else {
+                    r = Math.min(px, toBlock);
+                    document.documentElement.scrollTo(0, r);
+                }
+
                 if (r != heightTop + toBlock) {
                     requestAnimationFrame(step);
                 } else {

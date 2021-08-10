@@ -1,9 +1,10 @@
-export default function calc(selCalc, postData, fileUpload) {
+export default function calc(selCalc, postData) {
     let calcData = {
         optionsPrice: 0,
         discount: 0
     };
     let priceData;
+    let fileUpload = false;
     
     fetch("http://localhost:3000/price").then((responce) => {
         if (responce.ok && responce.status == 200) {
@@ -13,9 +14,17 @@ export default function calc(selCalc, postData, fileUpload) {
         priceData = data;
     });
     const boxCalc = document.querySelector(selCalc);
+
+    boxCalc.querySelector("[type='file']").addEventListener('drop', () => {
+        fileUpload = true;
+    });
+
     boxCalc.addEventListener('input', (event) => {
         if (priceData) {
             console.log(fileUpload);
+            if (event.target.getAttribute("type") == 'file') {
+                fileUpload = true;
+            }
             switch (event.target.id) {
                 case "size":
                     if (event.target.value == "Выберите размер картины") {
@@ -68,7 +77,7 @@ export default function calc(selCalc, postData, fileUpload) {
             document.querySelector(".calc-price").textContent = `
                 Сумма заказа ${Math.round(discount ? (sizePrice * materialPrice + optionsPrice) * discount : sizePrice * materialPrice + optionsPrice)}
             `;
-            if (fileUpload.iff) {
+            if (fileUpload) {
                 document.querySelector(".calc .button-order").disabled = false;
                 document.querySelector(".calc form").addEventListener('submit', () => {
                     calcData = {

@@ -15,11 +15,6 @@ import drop from "./modules/drop";
 window.addEventListener('DOMContentLoaded', () => {
     const postData = {};
 
-    const fileUpload = {
-        iff: false
-    };
-
-
     modal(".popup-design", ".button-design");
     modal(".popup-consultation", ".button-consultation");
     modal(".popup-gift", ".fixed-gift", true);
@@ -56,11 +51,12 @@ window.addEventListener('DOMContentLoaded', () => {
     checksText("[name='name']", "Руский");
     checksText("[name='message']", "Руский");
     loadingCards("http://localhost:3000/stylesBlock", "#styles .row", "#styles .button-styles");
-    calc(".calc form", postData, fileUpload);
+    calc(".calc form", postData);
     filter("#portfolio .portfolio-block", "#portfolio .portfolio-menu li");
     replacementImg(".sizes .sizes-block", ".sizes .sizes-block img");
     accordion(".accordion-heading", ".accordion-block");
     burger(".burger", ".burger-menu");
     scroll(".pageup");
-    drop(fileUpload);
+    drop();
+
 });
